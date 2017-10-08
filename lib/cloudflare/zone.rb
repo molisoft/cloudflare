@@ -59,6 +59,14 @@ module Cloudflare
 		def all
 			self.get.results.map{|record| DNSRecord.new(concat_urls(url, record[:id]), record, **options)}
 		end
+
+		# type eg A
+		# name eg www.bitbear.net
+		# content eg 127.0.0.1
+		def dns_created(type, name, content)
+			response = self.post({type: type, name: name, content: content}.to_json, content_type: 'application/json')
+			DNSRecord.new(concat_urls(url, response.result.id), response.result, **options)
+		end
 		
 		def find_by_name(name)
 			response = self.get(params: {name: name})
